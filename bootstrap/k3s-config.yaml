@@ -1,0 +1,5 @@
+# /etc/rancher/k3s/config.yaml
+# Embedded etcd from day one, so a second server can join later without a migration.
+cluster-init: true
+write-kubeconfig-mode: "0600"
+secrets-encryption: true

@@ -1,0 +1,34 @@
+name: validate
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+      - run: ./scripts/check.sh
+
+  boot:
+    # Boots the real stack on a throwaway k3s, on both architectures.
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: bootstrap
+        run: sudo ./bootstrap/install.sh "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+      - name: smoke
+        run: KUBECTL="sudo k3s kubectl" ./scripts/smoke.sh
+      - name: debug on failure
+        if: failure()
+        run: |
+          sudo k3s kubectl get kustomizations,helmreleases -A
+          sudo k3s kubectl get pods -A
+          sudo k3s kubectl get events -A --sort-by=.lastTimestamp | tail -40

@@ -1,0 +1,11 @@
+# The one file you edit per cluster. Values are substituted into
+# infrastructure/configs and apps as ${NAME}. Nothing secret goes here.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-settings
+  namespace: flux-system
+data:
+  DOMAIN: example.com
+  # Optional. Let's Encrypt uses it for expiry warnings. Leave empty for none.
+  ACME_EMAIL: ""

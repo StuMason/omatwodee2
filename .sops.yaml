@@ -1,0 +1,8 @@
+# Encrypt only the data of Secrets, with the cluster's age PUBLIC key.
+# bootstrap/install.sh prints the key; paste it over the placeholder.
+# Encrypting needs only this public key. Decrypting needs the private key,
+# which lives on the cluster (and in your offline backup), never in the repo.
+creation_rules:
+  - path_regex: .*\.sops\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: age1placeholderreplacewiththeclusterpublickeyfrombootstrapoutput

@@ -1,0 +1,37 @@
+# Built-in admission policy (no extra controller): app namespaces may not run
+# privileged containers or mount host paths, even if such a manifest gets merged.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: app-baseline
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["deployments", "statefulsets", "daemonsets"]
+  validations:
+    - expression: >-
+        object.spec.template.spec.containers.all(c,
+          !has(c.securityContext) || !has(c.securityContext.privileged) || c.securityContext.privileged == false)
+      message: "Privileged containers are not allowed in app namespaces."
+    - expression: >-
+        !has(object.spec.template.spec.volumes) ||
+        object.spec.template.spec.volumes.all(v, !has(v.hostPath))
+      message: "hostPath volumes are not allowed in app namespaces."
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: app-baseline
+spec:
+  policyName: app-baseline
+  validationActions: ["Deny"]
+  matchResources:
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: [kube-system, kube-public, kube-node-lease, flux-system, cert-manager, cnpg-system, database]

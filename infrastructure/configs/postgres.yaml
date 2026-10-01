@@ -1,0 +1,22 @@
+# One shared Postgres for every app; each app gets its own database and role.
+# Single instance: this is a one-node cluster. Raise instances when nodes are added.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared
+  namespace: database
+spec:
+  instances: 1
+  storage:
+    size: 10Gi
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 1Gi

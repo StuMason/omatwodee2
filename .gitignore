@@ -1,0 +1,4 @@
+*.agekey
+age.key
+kubeconfig*
+.env
