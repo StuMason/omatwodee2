@@ -19,7 +19,7 @@ Five pieces, all CNCF projects with real backing. Everything else is plain YAML 
 ```
 bootstrap/                 install.sh turns a fresh box into a cluster that runs this repo
 clusters/proof/            what Flux applies, in order: controllers, then configs, then apps
-  settings.yaml            the one file you edit per cluster (domain, email)
+  settings.yaml            the one file you edit per cluster (domain)
 infrastructure/
   controllers/             cert-manager and CloudNativePG
   configs/                 certificate issuer, shared Postgres, admission policy
