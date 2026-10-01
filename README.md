@@ -1,4 +1,4 @@
-# omakase (working name)
+# omatwodee2
 
 An opinionated, git-driven way to run your own apps on one cheap server. The whole setup lives in this repo. Flux, running on the server, applies whatever is on `main`. You or your agent change things by committing. Nobody logs into a dashboard, because there isn't one.
 
