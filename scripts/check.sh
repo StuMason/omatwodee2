@@ -41,7 +41,7 @@ echo "sops round-trip (throwaway key)"
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 age-keygen -o "$tmp/key" 2>/dev/null
 pub=$(age-keygen -y "$tmp/key")
-sed "s/age1placeholder[a-z0-9]*/$pub/" .sops.yaml > "$tmp/.sops.yaml"
+sed -E "s/age1[a-z0-9]+/$pub/" .sops.yaml > "$tmp/.sops.yaml"
 cat > "$tmp/test.sops.yaml" <<'YAML'
 apiVersion: v1
 kind: Secret
