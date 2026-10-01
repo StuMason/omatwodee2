@@ -24,6 +24,8 @@ echo "==> k3s ${K3S_VERSION}"
 install -D -m 0600 "$HERE/k3s-config.yaml" /etc/rancher/k3s/config.yaml
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="$K3S_VERSION" sh -s - server
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+# The installer returns before the API server is up and the node has registered.
+until kubectl get nodes --no-headers 2>/dev/null | grep -q .; do sleep 3; done
 kubectl wait --for=condition=Ready node --all --timeout=180s
 
 echo "==> Flux ${FLUX_VERSION}"

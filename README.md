@@ -49,6 +49,8 @@ Flux needs two things before it can read the repo, so they can't live in it. The
 
 Copy `apps/whoami/`, rename it, change the image and host, and add the folder to `apps/kustomization.yaml`. Run `./scripts/check.sh`. Commit. Flux deploys it within a minute.
 
+Flux replaces `${NAME}` with values from `settings.yaml`, so a literal `$` in a manifest (a shell argument, say) must be written as `$$`.
+
 ## Secrets
 
 Encrypting needs only the public key in `.sops.yaml`. That's all an agent working on this repo should ever hold:
