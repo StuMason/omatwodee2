@@ -7,5 +7,3 @@ metadata:
   namespace: flux-system
 data:
   DOMAIN: omatwodee2.stumason.dev
-  # Optional. Let's Encrypt uses it for expiry warnings. Leave empty for none.
-  ACME_EMAIL: ""
