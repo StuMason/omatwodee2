@@ -3,7 +3,6 @@
 #   KUBECTL="sudo k3s kubectl" ./scripts/smoke.sh
 set -euo pipefail
 read -r -a K <<<"${KUBECTL:-kubectl}"
-DOMAIN=$("${K[@]}" -n flux-system get configmap cluster-settings -o jsonpath='{.data.DOMAIN}')
 
 step() { printf '\n==> %s\n' "$1"; }
 
@@ -11,6 +10,8 @@ step "Flux Kustomizations ready"
 for ks in cluster controllers configs apps; do
   "${K[@]}" -n flux-system wait kustomization/"$ks" --for=condition=Ready --timeout=600s
 done
+
+DOMAIN=$("${K[@]}" -n flux-system get configmap cluster-settings -o jsonpath='{.data.DOMAIN}')
 
 step "Postgres ready"
 "${K[@]}" -n database wait cluster.postgresql.cnpg.io/shared --for=condition=Ready --timeout=600s
