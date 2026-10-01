@@ -35,7 +35,7 @@ if [ -z "$plain" ]; then pass "no plaintext Secret manifests"; else bad "plainte
 while IFS= read -r f; do
   if grep -q '^sops:' "$f"; then pass "$f is encrypted"; else bad "$f is not encrypted"; fi
 done < <(find . -name '*.sops.yaml' -not -name '.sops.yaml' -not -path './.git/*')
-grep -q 'age1placeholder' .sops.yaml && warn ".sops.yaml still has the placeholder key (run bootstrap, paste the printed key)"
+if grep -q "age1placeholder" .sops.yaml; then warn ".sops.yaml still has the placeholder key (run bootstrap, paste the printed key)"; fi
 
 echo "sops round-trip (throwaway key)"
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT

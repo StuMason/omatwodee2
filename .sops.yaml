@@ -5,4 +5,4 @@
 creation_rules:
   - path_regex: .*\.sops\.yaml$
     encrypted_regex: ^(data|stringData)$
-    age: age1placeholderreplacewiththeclusterpublickeyfrombootstrapoutput
+    age: age1q3cum0ds099r83vv5ffndhmzr5y5xnk7nk3ja2s7s32ce9gdmppsyrh44w
