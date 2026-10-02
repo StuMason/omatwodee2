@@ -47,7 +47,7 @@ Then set `HOST_SUFFIX` in `clusters/proof/settings.yaml` and commit. In Cloudfla
 
 Keep hostnames one level below the zone (`app-x.example.com`, not `app.x.example.com`) so Cloudflare's free certificate covers them.
 
-**Break glass:** with no inbound ports, a broken tunnel means no SSH. Use your provider's serial or web console to get in.
+**Break glass:** with no inbound ports, a broken tunnel means no SSH from outside. Keep SSH open to your provider's private network (the host firewall allows it there) and reach the box through another machine on that network, or use the provider's serial console if your image has a password login. Never snapshot a k3s node's live firewall (`netfilter-persistent save`): it captures k3s's per-pod chains, the restore fails at boot and nothing is applied. Write a static policy instead.
 
 ### Two secrets that can't come from the repo
 
