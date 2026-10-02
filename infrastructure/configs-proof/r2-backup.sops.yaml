@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: r2-backup
+    namespace: database
+type: Opaque
+stringData:
+    ACCESS_KEY_ID: ENC[AES256_GCM,data:rtOQYkQNFGFBZaCURlJVKtCceaaaYIVZFRXTGe3pvTM=,iv:QemIJB+sfiHPfHOvqVGXLi5zT7te4cZ2bGtCE0yqXtA=,tag:eByp51v4t4erN0FNXDCpEA==,type:str]
+    ACCESS_SECRET_KEY: ENC[AES256_GCM,data:EZ7RIN0EdyWAXw5MiZBxEfdW60gAUL+9XvBVWB76TaEcFcv76tqCH/xpYkEtUJO5Ruh9tWB93zdGGLRBHU32gQ==,iv:UNry9QXNYdybLko0BZvFewwanYGNboMdbs1QHu+eTZ8=,tag:ozYqqaFZnw9RGr3LUZQtzg==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArcVhXR2I0Q3dJazFGNVFX
+            NC9XWUJPQVZJczVnL1BnbFNJQkppeUVVY1dBCkxjZ1NjbVpJRDB2NEJ5WGFNWmxG
+            ZTY0aWZ3Rzk2djZJRTgvUm1uZTJMSEUKLS0tIEN0aDArdDZCbVNraW1vOWlBUjlD
+            SUFkUyt3eGw0d3JPb0h4UGViTlpkZ2MKD7ATsDDC3FyoiR96z1o3t9rGUmEFNnTB
+            5XpaZARXPyrXw/K+SD0P3lCLu4Wjqs4TWuu6s8F7nA6ejHmSlA4z6A==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1q3cum0ds099r83vv5ffndhmzr5y5xnk7nk3ja2s7s32ce9gdmppsyrh44w
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-10-02T16:13:44Z"
+    mac: ENC[AES256_GCM,data:4sPCiRO/z8LG6n1r+pD8ElB+L+gsGZLlYwjXed7lnAY+f1SASe/d/lgwzG7WErNk02TNoWhGeT8N+7eq5epv78yyhobeESsSt6BfeSGlYhIyx7j5IuoVPzOQv2qqzgTyzGIpPcdsLo8ntF3PYGhWJjMeyIEhSUpPvIXAoCbHFts=,iv:GcO7v0pU7tiZJrutH3NL2TdykzTHZuD5mJAJEejtUD0=,tag:9nFCkzhWt1OSa0VVLvxxug==,type:str]
+    version: 3.13.3

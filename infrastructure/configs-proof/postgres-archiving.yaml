@@ -1,0 +1,12 @@
+# Continuous WAL archiving to the r2 ObjectStore (point-in-time restore).
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared
+  namespace: database
+spec:
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: r2

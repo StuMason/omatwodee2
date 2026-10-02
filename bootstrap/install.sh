@@ -8,6 +8,7 @@ set -euo pipefail
 
 REPO_URL=${1:?usage: install.sh <repo-url> [branch]}
 BRANCH=${2:-main}
+CLUSTER=${CLUSTER:-proof}   # which clusters/<name> directory this box runs
 K3S_VERSION=v1.36.5+k3s1
 FLUX_VERSION=v2.9.6
 AGE_VERSION=v1.3.2
@@ -45,7 +46,7 @@ chmod 0600 "$KEY_DIR/age.key"
 kubectl -n flux-system create secret generic sops-age \
   --from-file=age.agekey="$KEY_DIR/age.key" --dry-run=client -o yaml | kubectl apply -f -
 
-echo "==> point Flux at ${REPO_URL} (${BRANCH})"
+echo "==> point Flux at ${REPO_URL} (${BRANCH}, clusters/${CLUSTER})"
 kubectl apply -f - <<YAML
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
@@ -65,7 +66,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./clusters/proof
+  path: ./clusters/${CLUSTER}
   prune: true
   sourceRef:
     kind: GitRepository

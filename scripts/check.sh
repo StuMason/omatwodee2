@@ -12,12 +12,14 @@ warn() { printf '  warn  %s\n' "$1"; }
 
 K8S_VERSION=1.36.0
 CRD_SCHEMAS='https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
-ENTRIES=(clusters/proof infrastructure/controllers infrastructure/configs apps)
+ENTRIES=(clusters/proof clusters/ci infrastructure/controllers infrastructure/configs infrastructure/configs-proof apps)
 
 echo "render + schema"
 for e in "${ENTRIES[@]}"; do
   if ! out=$(kustomize build "$e" 2>&1); then bad "$e: kustomize build"; printf '        %s\n' "$out"; continue; fi
-  if res=$(kubeconform -strict -summary -kubernetes-version "$K8S_VERSION" \
+  # Secrets are skipped here: encrypted ones carry a sops: block (stripped by Flux
+  # before apply) and are covered by the "secrets" checks below.
+  if res=$(kubeconform -strict -summary -skip Secret -kubernetes-version "$K8S_VERSION" \
         -schema-location default -schema-location "$CRD_SCHEMAS" - <<<"$out" 2>&1); then
     pass "$e ($(tail -1 <<<"$res"))"
   else

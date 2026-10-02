@@ -1,0 +1,11 @@
+# The proof cluster's configs: the shared base plus backups to R2.
+# (CI uses ./infrastructure/configs directly: it can't decrypt this cluster's secrets.)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../configs
+  - r2-backup.sops.yaml
+  - objectstore.yaml
+  - scheduled-backup.yaml
+patches:
+  - path: postgres-archiving.yaml

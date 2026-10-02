@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: bootstrap
-        run: sudo ./bootstrap/install.sh "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+        run: sudo CLUSTER=ci ./bootstrap/install.sh "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
       - name: smoke
         run: KUBECTL="sudo k3s kubectl" ./scripts/smoke.sh
       - name: debug on failure

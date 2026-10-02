@@ -1,0 +1,9 @@
+# Settings for the throwaway cluster CI boots on every push. Same stack as a real
+# cluster, minus anything that needs that cluster's encryption key (backups).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-settings
+  namespace: flux-system
+data:
+  HOST_SUFFIX: "-ci.example.com"

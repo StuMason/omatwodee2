@@ -21,7 +21,7 @@ spec:
   dependsOn:
     - name: controllers
   interval: 10m
-  path: ./infrastructure/configs-proof
+  path: ./infrastructure/configs
   prune: true
   # No wait: a slow ACME registration must not block every app from deploying.
   sourceRef:

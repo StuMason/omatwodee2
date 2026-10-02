@@ -1,0 +1,29 @@
+# Where Postgres backups go: the or2-backups R2 bucket. Retention 14 days.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: r2
+  namespace: database
+spec:
+  retentionPolicy: "14d"
+  configuration:
+    destinationPath: s3://or2-backups/postgres
+    endpointURL: https://18626a53a22a2ce5377ae20f9adeda92.r2.cloudflarestorage.com
+    s3Credentials:
+      accessKeyId:
+        name: r2-backup
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: r2-backup
+        key: ACCESS_SECRET_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip
+  # R2 rejects the AWS SDK's default request checksums.
+  instanceSidecarConfiguration:
+    env:
+      - name: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required
