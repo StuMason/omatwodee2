@@ -69,6 +69,7 @@ export interface ExecResult {
 }
 export interface BackupSummary {
   name: string;
+  createdAt?: string;
   phase: string;
   method?: string;
   startedAt?: string;
@@ -94,8 +95,25 @@ export interface Cluster {
 
 export class NotAnAppError extends Error {}
 
-function cpu(value: unknown): string {
-  return String(value ?? '0');
+/** Kubernetes CPU quantity (e.g. "152839126n", "250m", "2") as millicores: "153m". */
+export function cpu(value: unknown): string {
+  const raw = String(value ?? '0');
+  const m = /^([0-9.]+)([num]?)$/.exec(raw);
+  if (!m) return raw;
+  const n = Number(m[1]);
+  const milli = m[2] === 'n' ? n / 1e6 : m[2] === 'u' ? n / 1e3 : m[2] === 'm' ? n : n * 1000;
+  return `${Math.round(milli)}m`;
+}
+
+/** Kubernetes memory quantity (e.g. "2658000Ki") as MiB/GiB: "2.5Gi". */
+export function memory(value: unknown): string {
+  const raw = String(value ?? '0');
+  const m = /^([0-9.]+)(Ki|Mi|Gi|K|M|G)?$/.exec(raw);
+  if (!m) return raw;
+  const factor: Record<string, number> = { Ki: 1024, Mi: 1024 ** 2, Gi: 1024 ** 3, K: 1e3, M: 1e6, G: 1e9 };
+  const bytes = Number(m[1]) * (m[2] ? factor[m[2]] ?? 1 : 1);
+  const mib = bytes / 1024 ** 2;
+  return mib >= 1024 ? `${(mib / 1024).toFixed(1)}Gi` : `${Math.round(mib)}Mi`;
 }
 
 export class K8sCluster implements Cluster {
@@ -241,14 +259,14 @@ export class K8sCluster implements Cluster {
     const apps = new Set([...(await this.appNames()), this.databaseNamespace]);
     const [nodes, pods] = await Promise.all([this.metrics.getNodeMetrics(), this.metrics.getPodMetrics()]);
     return {
-      nodes: nodes.items.map((n) => ({ name: n.metadata.name, cpu: cpu(n.usage.cpu), memory: String(n.usage.memory) })),
+      nodes: nodes.items.map((n) => ({ name: n.metadata.name, cpu: cpu(n.usage.cpu), memory: memory(n.usage.memory) })),
       pods: pods.items
         .filter((p) => apps.has(p.metadata.namespace ?? ''))
         .map((p) => ({
           namespace: p.metadata.namespace ?? '',
           name: p.metadata.name,
           cpu: p.containers.map((c) => cpu(c.usage.cpu)).join('+'),
-          memory: p.containers.map((c) => String(c.usage.memory)).join('+'),
+          memory: p.containers.map((c) => memory(c.usage.memory)).join('+'),
         })),
     };
   }
@@ -455,12 +473,14 @@ export class K8sCluster implements Cluster {
     return list.items
       .map((b) => ({
         name: String(b.metadata?.name ?? ''),
+        createdAt: String(b.metadata?.creationTimestamp ?? ''),
         phase: String(b.status?.phase ?? 'pending'),
         method: b.spec?.method,
         startedAt: b.status?.startedAt,
         stoppedAt: b.status?.stoppedAt,
         error: b.status?.error,
       }))
-      .sort((a, b) => String(b.startedAt ?? b.name).localeCompare(String(a.startedAt ?? a.name)));
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .map(({ createdAt, ...rest }) => ({ ...rest, createdAt }));
   }
 }

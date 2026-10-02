@@ -97,3 +97,18 @@ describe('AccessVerifier', () => {
     expect(await v.verify(jwt(k1.priv, 'k1', good()))).toEqual({ ok: false, reason: 'could not fetch Cloudflare Access keys' });
   });
 });
+
+import { cpu, memory } from '../lib/cluster.js';
+describe('quantity formatting', () => {
+  it('formats CPU as millicores', () => {
+    expect(cpu('152839126n')).toBe('153m');
+    expect(cpu('2500u')).toBe('3m');
+    expect(cpu('250m')).toBe('250m');
+    expect(cpu('2')).toBe('2000m');
+  });
+  it('formats memory as Mi/Gi', () => {
+    expect(memory('2658000Ki')).toBe('2.5Gi');
+    expect(memory('142776Ki')).toBe('139Mi');
+    expect(memory('512Mi')).toBe('512Mi');
+  });
+});
