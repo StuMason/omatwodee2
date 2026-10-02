@@ -2,3 +2,4 @@
 age.key
 kubeconfig*
 .env
+.cloudflare/
