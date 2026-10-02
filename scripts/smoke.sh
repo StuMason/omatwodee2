@@ -11,7 +11,7 @@ for ks in cluster controllers configs apps; do
   "${K[@]}" -n flux-system wait kustomization/"$ks" --for=condition=Ready --timeout=600s
 done
 
-DOMAIN=$("${K[@]}" -n flux-system get configmap cluster-settings -o jsonpath='{.data.DOMAIN}')
+SUFFIX=$("${K[@]}" -n flux-system get configmap cluster-settings -o jsonpath='{.data.HOST_SUFFIX}')
 
 step "Postgres ready"
 "${K[@]}" -n database wait cluster.postgresql.cnpg.io/shared --for=condition=Ready --timeout=600s
@@ -19,11 +19,11 @@ step "Postgres ready"
 step "whoami serving through Traefik"
 "${K[@]}" -n whoami rollout status deploy/whoami --timeout=300s
 for _ in $(seq 1 30); do
-  if curl -fsS -H "Host: whoami.${DOMAIN}" http://127.0.0.1/ | grep -q '^Hostname:'; then ok=1; break; fi
+  if curl -fsS -H "Host: whoami${SUFFIX}" http://127.0.0.1/ | grep -q '^Hostname:'; then ok=1; break; fi
   sleep 5
 done
 [ "${ok:-}" = 1 ] || { echo "whoami did not answer through Traefik"; exit 1; }
-echo "answered on whoami.${DOMAIN}"
+echo "answered on whoami${SUFFIX}"
 
 step "admission policy blocks a privileged container"
 priv=$(cat <<'YAML'

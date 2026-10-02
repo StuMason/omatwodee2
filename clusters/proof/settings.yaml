@@ -1,9 +1,15 @@
 # The one file you edit per cluster. Values are substituted into
 # infrastructure/configs and apps as ${NAME}. Nothing secret goes here.
+#
+# HOST_SUFFIX is appended to each app's name to make its hostname:
+#   whoami + "-or2.stumason.dev"  ->  whoami-or2.stumason.dev
+#   whoami + ".example.com"       ->  whoami.example.com
+# Behind Cloudflare, keep hostnames one level below the zone (app-x.zone.tld)
+# so the zone's free certificate covers them.
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cluster-settings
   namespace: flux-system
 data:
-  DOMAIN: omatwodee2.stumason.dev
+  HOST_SUFFIX: "-or2.stumason.dev"

@@ -1,17 +1,12 @@
+# HTTPS is terminated at Cloudflare's edge; the tunnel hands Traefik plain HTTP.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: whoami
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   ingressClassName: traefik
-  tls:
-    - hosts:
-        - "whoami.${DOMAIN}"
-      secretName: whoami-tls
   rules:
-    - host: "whoami.${DOMAIN}"
+    - host: "whoami${HOST_SUFFIX}"
       http:
         paths:
           - path: /

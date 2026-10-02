@@ -2,6 +2,8 @@
 # Turns a fresh Debian/Ubuntu box into a cluster that runs this repo.
 # Run as root from a checkout of the repo:
 #   sudo ./bootstrap/install.sh https://github.com/<you>/<repo> [branch]
+# With TUNNEL_CREDENTIALS=/path/credentials.json set, it also runs the
+# Cloudflare tunnel (bootstrap/tunnel.sh). Without it, the tunnel is skipped.
 set -euo pipefail
 
 REPO_URL=${1:?usage: install.sh <repo-url> [branch]}
@@ -69,6 +71,12 @@ spec:
     kind: GitRepository
     name: omakase
 YAML
+
+if [ -n "${TUNNEL_CREDENTIALS:-}" ]; then
+  "$HERE/tunnel.sh" "$TUNNEL_CREDENTIALS"
+else
+  echo "==> tunnel skipped (no TUNNEL_CREDENTIALS)"
+fi
 
 PUB=$(age-keygen -y "$KEY_DIR/age.key")
 cat <<MSG

@@ -1,28 +1,28 @@
 # omatwodee2
 
-An opinionated, git-driven way to run your own apps on one cheap server. The whole setup lives in this repo. Flux, running on the server, applies whatever is on `main`. You or your agent change things by committing. Nobody logs into a dashboard, because there isn't one.
+An opinionated way to run your own apps on one cheap server, built from three things: any VPS, GitHub and Cloudflare. The shape of everything (apps, domains, databases) lives in this repo, and Flux on the server applies whatever is on `main`. Nothing on the server is open to the internet: all traffic, including SSH and the Kubernetes API, arrives through a Cloudflare tunnel. Nobody logs into a dashboard, because there isn't one; you or your agent drive it.
 
 ## What's in it
 
-Five pieces, all CNCF projects with real backing. Everything else is plain YAML in this repo.
+Four pieces in the cluster, all CNCF projects with real backing, plus Cloudflare's tunnel on the host. Everything else is plain YAML in this repo.
 
 | Piece | Version | Job |
 |---|---|---|
 | k3s | v1.36.5+k3s1 (stable channel) | Kubernetes in one binary. Ships Traefik for routing and local-path for storage |
 | Flux | v2.9.6 | Applies this repo to the cluster, and decrypts secrets |
-| cert-manager | v1.21.2 | HTTPS certificates from Let's Encrypt |
 | SOPS + age | 3.13.3 / 1.3.2 | Secrets are committed encrypted |
 | CloudNativePG | 1.30.1 (chart 0.29.1) | One shared Postgres, a database per app |
+| cloudflared | 2026.9.3 (host service) | The tunnel. HTTPS ends at Cloudflare's edge, so no certificates on the box |
 
 ## Layout
 
 ```
-bootstrap/                 install.sh turns a fresh box into a cluster that runs this repo
+bootstrap/                 install.sh turns a fresh box into a cluster; tunnel.sh runs the tunnel
 clusters/proof/            what Flux applies, in order: controllers, then configs, then apps
-  settings.yaml            the one file you edit per cluster (domain)
+  settings.yaml            the one file you edit per cluster (HOST_SUFFIX)
 infrastructure/
-  controllers/             cert-manager and CloudNativePG
-  configs/                 certificate issuer, shared Postgres, admission policy
+  controllers/             CloudNativePG
+  configs/                 shared Postgres, admission policy
 apps/                      one folder per app
 scripts/check.sh           offline checks (render, schemas, lint, secrets)
 scripts/smoke.sh           live checks against a running cluster
@@ -30,20 +30,28 @@ scripts/smoke.sh           live checks against a running cluster
 
 ## Set up a server
 
-On a fresh Debian or Ubuntu box with ports 80 and 443 open:
+First create a locally-managed Cloudflare tunnel and save its `credentials.json` (`{"AccountTag","TunnelID","TunnelSecret"}`). Then, on a fresh Debian or Ubuntu box:
 
 ```sh
 git clone https://github.com/<you>/<repo> && cd <repo>
-sudo ./bootstrap/install.sh https://github.com/<you>/<repo>
+sudo TUNNEL_CREDENTIALS=/path/to/credentials.json ./bootstrap/install.sh https://github.com/<you>/<repo>
 ```
 
 The script installs k3s and Flux, creates the cluster's encryption key **on the box**, and points Flux at the repo. At the end it prints a public key. Put that key in `.sops.yaml` and commit it. Back up the private key it names somewhere off the box. If it's lost, every encrypted secret in the repo is unreadable.
 
-Then set `DOMAIN` in `clusters/proof/settings.yaml`, point `*.your-domain` at the box, and commit.
+Then set `HOST_SUFFIX` in `clusters/proof/settings.yaml` and commit. In Cloudflare:
+
+1. Create Access applications for `k8s<suffix>` and `ssh<suffix>` (your email, plus a service token for your agent) **before** pointing DNS at them.
+2. Point each app's hostname, plus `k8s<suffix>` and `ssh<suffix>`, at `<tunnel-id>.cfargotunnel.com` as proxied CNAMEs.
+3. Once the site, SSH and the API work through the tunnel and survive a reboot, close every inbound port on the box's firewall.
+
+Keep hostnames one level below the zone (`app-x.example.com`, not `app.x.example.com`) so Cloudflare's free certificate covers them.
+
+**Break glass:** with no inbound ports, a broken tunnel means no SSH. Use your provider's serial or web console to get in.
 
 ### Two secrets that can't come from the repo
 
-Flux needs two things before it can read the repo, so they can't live in it. The encryption key (`sops-age`) is created by `install.sh` on the box. A deploy key is only needed if the repo is private; v1 assumes a public repo. Every other secret goes into git, encrypted.
+Flux needs some things before it can read the repo, so they can't live in it. The encryption key (`sops-age`) is created by `install.sh` on the box. The tunnel credential is copied to `/etc/cloudflared` by `tunnel.sh`. A deploy key is only needed if the repo is private. Every other secret goes into git, encrypted.
 
 ## Add an app
 
@@ -71,5 +79,5 @@ Tools are pinned in `mise.toml`. Run `mise install`.
 ## Deliberate choices for v1
 
 - **Plain Ingress, not Gateway API.** Ingress needs no extra setup on k3s. Gateway API needs Traefik config, and from k3s 1.37 a separate CRD chart.
-- **HTTP-01 certificates, not wildcard DNS-01.** No DNS provider token needed. Wildcards only matter for preview environments.
+- **Behind Cloudflare by default.** HTTPS ends at Cloudflare's edge and the box has no open ports. To serve directly instead, open 80/443 and bring back cert-manager (it was in this repo until the tunnel commit; see the git history).
 - **No preview environments, backups or monitoring yet.** Backups to S3-compatible storage come next. Previews and monitoring come once the core has been proven on real hardware.
