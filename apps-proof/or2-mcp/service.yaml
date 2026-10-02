@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: or2-mcp
+  namespace: or2
+spec:
+  selector:
+    app: or2-mcp
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

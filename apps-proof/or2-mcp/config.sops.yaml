@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: or2-mcp-config
+    namespace: or2
+type: Opaque
+stringData:
+    CF_ACCESS_TEAM_DOMAIN: ENC[AES256_GCM,data:1fHhPjWDkQhtUE4ByNzVOK60wlxlKAqlBKFzvYnL8NE=,iv:9oNjX+O/yvBRnXnmEEFE45loe5pJ2VF1pm54hkusn6o=,tag:ZiTSwrvC3a+wun4OO91VXA==,type:str]
+    CF_ACCESS_AUD: ENC[AES256_GCM,data:HowPUpG3u9lJUXyW8ceros7COYIJp5xs8q8KllNN6AA7V531FpPJc8GcN1+NxW6C2IYIEs7/KDUHhjzPHASRPA==,iv:2e1qs2QalmrqRiGcrtD4nFDuS1f0T1pGr6ACwo/PotE=,tag:HHbDUhXgtJQo3ntD2L3DLg==,type:str]
+    OR2_ALLOWED_EMAILS: ENC[AES256_GCM,data:YzU/Y4JksjgNzbrCOd1PJo2/dTM/,iv:mTGfYp/RTPki/N+/4a9T6aAxDUXueAN/GMsCZOXgIsU=,tag:NR0jpioSzZJc1peTNeU/kw==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBleWF1SUtMa0FrTXJVZjVr
+            Ly80cmtnZy9Cdzk0S1BHbVBuVlRWRUtZb0JJCllPZVhoL3Z1NE5TSy92WHZuSWZL
+            NHRVd1pvZzZrYmowZVkveVNWNHZWYzQKLS0tIHhZYTl4VEh5bnY3QUVmR2N4S0c1
+            eHp4ZUdQWStuY1VzMUM4d0lRSnFVWjgKPHIQOoCKksKVAKEVnxcrltdFb8tIGIn9
+            yhzMXDic04rT4Z7/zm5pWDVJa2Eo+sIAAs0ek+b4PrXRWZOlsalRbw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1q3cum0ds099r83vv5ffndhmzr5y5xnk7nk3ja2s7s32ce9gdmppsyrh44w
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-10-02T21:07:21Z"
+    mac: ENC[AES256_GCM,data:Z/kIZadBNSWxYVfG53BcA2TSAB+MYpo24pNd/Tf9qQZFtQkMxy/z2YGetAaVgw3bs55a9R1gSVUo8D8/cWVK9BlWdp6CGVOqNkuCxKR/yFB/sKQ12LGat96RjZdWaZgmq5AJ1oV76RJWKWzGC97q3G/vB0cfS+At0CS6Z9NATkw=,iv:kzKxmLlmFCDujoPCE8wCKaL27Qy48rI6OaOwWpkLoUU=,tag:p9UYVJQ63GLtjuDEifZSeg==,type:str]
+    version: 3.13.3

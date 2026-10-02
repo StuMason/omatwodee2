@@ -6,3 +6,4 @@ resources:
   - ../apps
   - umami
   - bugsink
+  - or2-mcp

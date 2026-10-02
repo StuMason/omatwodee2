@@ -23,6 +23,10 @@ spec:
           envFrom:
             - secretRef:
                 name: umami
+            # Last, so it wins: values set at runtime through the MCP (or2_env_set); Flux does not manage it.
+            - secretRef:
+                name: runtime-env
+                optional: true
           env:
             # Real visitor IP from Cloudflare, for location stats.
             - name: CLIENT_IP_HEADER

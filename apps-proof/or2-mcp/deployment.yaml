@@ -1,0 +1,67 @@
+# The OR2 MCP server: Claude Desktop / claude.ai operate this cluster through it.
+# Runs as or2-agent, so it can only do what that role allows. The image tag is
+# bumped by .github/workflows/mcp.yml after each build.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: or2-mcp
+  namespace: or2
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # single ReadWriteOnce volume for OAuth state
+  selector:
+    matchLabels:
+      app: or2-mcp
+  template:
+    metadata:
+      labels:
+        app: or2-mcp
+    spec:
+      serviceAccountName: or2-agent
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: mcp
+          image: ghcr.io/stumason/omatwodee2-mcp:main
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: MCP_PUBLIC_URL
+              value: "https://mcp${HOST_SUFFIX}"
+            - name: MCP_OAUTH_STATE_FILE
+              value: /data/oauth-state.json
+          envFrom:
+            - secretRef:
+                name: or2-mcp-config
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 10m
+              memory: 96Mi
+            limits:
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: state
+              mountPath: /data
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: or2-mcp-state
