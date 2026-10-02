@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: umami-db-role
+    namespace: database
+type: kubernetes.io/basic-auth
+stringData:
+    username: ENC[AES256_GCM,data:JjsHL/w=,iv:18NQcBbTql3BkKUCAR8oGKXQYHyAldz19hAGCSHmmDM=,tag:Qv3DzKi7zYwS38kCBY/0iw==,type:str]
+    password: ENC[AES256_GCM,data:JwD3L9/iuyFmIPjWJPWHtWfLUYXhPmx14QFAFnhEqs4=,iv:RuUivxdzdStDzQS+ynZRLUXNfU0zO4wC61ISa+FyazM=,tag:i/w3EBSQLp51MYYL0ObcjA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGa1hIaS9OUG1wNXU1VkdV
+            aGtCVDYzaEl1ZFl1Rkl3aVB1WE1DcWl3WDJrClRZWmNzUDBYdWJjdWRMTis0ODdX
+            elFsUk94U05EZnNHVDBtWXkwcEpkVWsKLS0tIEU0MzhzU2YyK3VVRVBkandYK0J4
+            MTVsclAxcWk0RFpYbGZiZUY2QnFlMDgKAmayuIMK2ogA5QmglFp3P7h6mGHx8mpr
+            LXKkGT0L6h56TycZZYji9swPFILNlgTKqkFb43n8lmG/lAOHReYFzA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1q3cum0ds099r83vv5ffndhmzr5y5xnk7nk3ja2s7s32ce9gdmppsyrh44w
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-10-02T20:36:55Z"
+    mac: ENC[AES256_GCM,data:JZAJpKkL4Lurm+m1+QW2+vet5Kj6YkxI8wjNslhH/BV8lpCLnsU6bKGHMyZeRRcEWTo6QYmqtMt259zhBJVwyPbrTLcuDkJhHmXJ9/zHtj+d+ge4pE75Gl5doon5xp0Oy0kKQ4LgVhW1FQp32kRlothz9gtTt/+UlPRg5T995IE=,iv:Chi+So8esKuNjRjX9aZMMcX2Z+kB1PLEap7skEXVSW0=,tag:yv4RHnHlOf/0GvYnL660cw==,type:str]
+    version: 3.13.3

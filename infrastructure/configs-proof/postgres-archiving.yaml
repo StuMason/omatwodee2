@@ -10,3 +10,14 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: r2
+  # App login roles; passwords come from the encrypted <app>-db-role Secrets.
+  managed:
+    roles:
+      - name: umami
+        login: true
+        passwordSecret:
+          name: umami-db-role
+      - name: bugsink
+        login: true
+        passwordSecret:
+          name: bugsink-db-role

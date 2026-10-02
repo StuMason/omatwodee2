@@ -1,0 +1,14 @@
+# k3s ships Traefik; this adjusts it. Only the Cloudflare tunnel reaches Traefik
+# (the box has no public ports), so trust the forwarded headers it passes on:
+# apps then see https and the real visitor IP.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ports:
+      web:
+        forwardedHeaders:
+          insecure: true

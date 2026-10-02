@@ -1,0 +1,51 @@
+# Bugsink (error tracking, Sentry-compatible). Data in the shared Postgres (database: bugsink).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bugsink
+  namespace: bugsink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bugsink
+  template:
+    metadata:
+      labels:
+        app: bugsink
+    spec:
+      containers:
+        - name: bugsink
+          image: bugsink/bugsink:2.6.1
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: bugsink
+          env:
+            - name: PORT
+              value: "8000"
+            - name: BASE_URL
+              value: "https://bugsink${HOST_SUFFIX}"
+            - name: BEHIND_HTTPS_PROXY
+              value: "true"
+            - name: SNAPPEA_NUM_WORKERS
+              value: "1"
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 20m
+              memory: 192Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false

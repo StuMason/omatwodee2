@@ -1,0 +1,8 @@
+# The proof cluster's apps: everything in ./apps plus apps with this cluster's
+# encrypted secrets. (CI applies ./apps only: it can't decrypt these.)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../apps
+  - umami
+  - bugsink

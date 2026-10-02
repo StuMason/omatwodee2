@@ -1,0 +1,23 @@
+# One database per app in the shared Postgres, owned by the app's own role.
+# Roles are declared in postgres-archiving.yaml (spec.managed.roles).
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: umami
+  namespace: database
+spec:
+  name: umami
+  owner: umami
+  cluster:
+    name: shared
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: bugsink
+  namespace: database
+spec:
+  name: bugsink
+  owner: bugsink
+  cluster:
+    name: shared

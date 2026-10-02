@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: bugsink-db-role
+    namespace: database
+type: kubernetes.io/basic-auth
+stringData:
+    username: ENC[AES256_GCM,data:nqzVAP3L4g==,iv:flFqOsDKBg7bVo+ypOnh59U9gCvWIDgkBDOf2R8hf6g=,tag:bJOw9962fPmXcMZW3sg2ZQ==,type:str]
+    password: ENC[AES256_GCM,data:zRb/1Wkl43Ew+bXhwYdjJCDwNpHx0eECMsXGXsPmc3g=,iv:H5vtzH6S7XSjlxqX9yednqvTHSqBD+EoIMWtrm3B4xo=,tag:Owdmi3lnwzajrLCSFn4yyQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBFYnhpYUZiR2kvL1hDRGZE
+            eCtSYjRMMy9RdUpvbUY5bFVOV2Rnbm9Eanc4CndKZGtIWktIbDhmODQyR3hjOFB6
+            VW1WVnY1S3hvZ0hyTEgrM2RMK3l0VDQKLS0tIGZpSk9KRkM5NHNlZ2t5NEZoQ1hC
+            amkvRFVuekR6UEhUSEJQeUo2N0llU1EKPmXVIroASh46v52K8zUo4qiKzrcE3yjH
+            TyhEn0nn4ABkRCnZSHcgdzIJFaNhsoHNUudzFpN/uKGtBYX9EPijDQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1q3cum0ds099r83vv5ffndhmzr5y5xnk7nk3ja2s7s32ce9gdmppsyrh44w
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-10-02T20:36:55Z"
+    mac: ENC[AES256_GCM,data:VmCJb1aBu06DCnOIX6VEOaensHPJY28qpjLBfWqzHIexCnbQPIohsUNnFeaPkNPulAelGCPiwbN8R0LNlMbYyw2SPjLsRtR2odc3+u6Uneq7LgF7hc4Jd0e9129drmR/6S+8ZfwXR9m092x++1ovmpJcYuvwDfDOYKgMoRUg1as=,iv:Y80g142owMf889NNnlzIgp/SwABvRRD8O+6O/zbGHlI=,tag:9SS6/iYFJRJp/QjNP+81Ww==,type:str]
+    version: 3.13.3

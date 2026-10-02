@@ -12,7 +12,7 @@ warn() { printf '  warn  %s\n' "$1"; }
 
 K8S_VERSION=1.36.0
 CRD_SCHEMAS='https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
-ENTRIES=(clusters/proof clusters/ci infrastructure/controllers infrastructure/configs infrastructure/configs-proof apps)
+ENTRIES=(clusters/proof clusters/ci infrastructure/controllers infrastructure/configs infrastructure/configs-proof apps apps-proof)
 
 echo "render + schema"
 for e in "${ENTRIES[@]}"; do

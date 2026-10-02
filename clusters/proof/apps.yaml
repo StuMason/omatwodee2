@@ -7,7 +7,7 @@ spec:
   dependsOn:
     - name: configs
   interval: 10m
-  path: ./apps
+  path: ./apps-proof
   prune: true
   sourceRef:
     kind: GitRepository
