@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - postgres.yaml
   - admission-policy.yaml
+  - agent-rbac.yaml

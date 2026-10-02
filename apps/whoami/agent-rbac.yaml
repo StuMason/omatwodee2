@@ -1,0 +1,13 @@
+# Lets the agent operate this app (restart, env values, exec, logs). Every app carries one.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: or2-agent-operate
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: or2-agent-operate
+subjects:
+  - kind: ServiceAccount
+    name: or2-agent
+    namespace: or2
